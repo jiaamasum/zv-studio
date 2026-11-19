@@ -1,7 +1,12 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex">
-<title>Connecting…</title></head><body>
+<meta name="referrer" content="no-referrer"><title>Connecting…</title></head><body>
 <p>Connecting… you can close this tab when it says "connected".</p>
 <script>
-// Login relay: Facebook only redirects to https pages. Hand the one-time code to the app on this computer.
-location.replace("http://localhost:8788/fb/callback" + location.search);
+// Login relay: Facebook only redirects to https pages. Forward ONLY the OAuth fields to the app on this computer
+// (it checks `state` against the one it generated for this login and listens only while a login is in progress).
+var src = new URLSearchParams(location.search), out = new URLSearchParams();
+["code", "state", "error", "error_reason", "error_description"].forEach(function (k) {
+  if (src.has(k)) out.set(k, src.get(k));
+});
+location.replace("http://localhost:8788/fb/callback?" + out.toString());
 </script></body></html>
